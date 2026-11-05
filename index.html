@@ -1786,5 +1786,99 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
 		<div class="phone" aria-hidden="true"></div>
 		<div><strong>Rotate your device</strong>Eaglercraft requires landscape mode on phones.</div>
 	</div>
+
+<script type="text/javascript">
+/* In-page log console (no devtools needed). Tap the LOG button. Hide it with ?nolog=1 */
+(function () {
+  if (/[?&]nolog=1(?:&|$)/.test(location.search)) return;
+  function init() {
+    var open = false, errOnly = false, timer = null;
+    var btn = document.createElement('div');
+    btn.id = 'eag_logbtn'; btn.textContent = 'LOG';
+    btn.style.cssText = 'position:fixed;z-index:2147483647;right:6px;top:6px;padding:4px 8px;font:bold 12px monospace;'
+      + 'color:#fff;background:rgba(0,0,0,.55);border:1px solid #888;border-radius:4px;cursor:pointer;user-select:none;-webkit-user-select:none;opacity:.75;';
+    var panel = document.createElement('div');
+    panel.id = 'eag_logcon';
+    panel.style.cssText = 'position:fixed;z-index:2147483647;left:0;right:0;top:0;bottom:0;display:none;flex-direction:column;'
+      + 'background:rgba(10,10,10,.96);color:#ddd;font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;';
+    var bar = document.createElement('div');
+    bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;padding:6px;border-bottom:1px solid #444;';
+    var pre = document.createElement('pre');
+    pre.style.cssText = 'flex:1;margin:0;padding:8px;overflow:auto;white-space:pre-wrap;word-break:break-word;-webkit-user-select:text;user-select:text;';
+    var status = document.createElement('span');
+    status.style.cssText = 'margin-left:auto;align-self:center;color:#999;';
+    function mk(label, fn) {
+      var b = document.createElement('button'); b.textContent = label;
+      b.style.cssText = 'padding:6px 10px;font:12px monospace;background:#2a2a2a;color:#fff;border:1px solid #666;border-radius:4px;';
+      b.onclick = fn; bar.appendChild(b); return b;
+    }
+    function lines() {
+      var l = (window.__log || []).slice(-1500);
+      if (errOnly) l = l.filter(function (x) { return /^(E:|W:|WINERR|REJECT)/.test(x); });
+      return l;
+    }
+    function header() {
+      var h = ['== Eaglercraft log ' + new Date().toISOString(), 'url: ' + location.href, 'ua: ' + navigator.userAgent];
+      try { if (performance.memory) h.push('heap: ' + Math.round(performance.memory.usedJSHeapSize / 1048576) + ' / ' + Math.round(performance.memory.jsHeapSizeLimit / 1048576) + ' MB'); } catch (e) {}
+      try { var s = window.__eaglerCrashJournal && window.__eaglerCrashJournal.snapshot(); if (s) h.push('journal: state=' + s.state + ' stage=' + s.stage + (s.error ? ' error=' + String(s.error).slice(0, 400) : '') + (s.lastWindowError ? ' lastWindowError=' + String(s.lastWindowError).slice(0, 400) : '')); } catch (e) {}
+      if (window.__err) h.push('__err: ' + window.__err);
+      var st = document.getElementById('boot_status'); if (st) h.push('boot: ' + st.textContent);
+      return h.join('\n');
+    }
+    function text() { return header() + '\n--\n' + lines().join('\n'); }
+    function render() {
+      var nearEnd = pre.scrollTop + pre.clientHeight >= pre.scrollHeight - 40;
+      pre.textContent = text();
+      status.textContent = (window.__log || []).length + ' lines';
+      if (nearEnd) pre.scrollTop = pre.scrollHeight;
+    }
+    function copyText(t) {
+      function fallback() {
+        var ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;left:0;top:0;opacity:0;';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); return ok;
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(t).then(function () { return true; }, function () { return fallback(); });
+      }
+      return Promise.resolve(fallback());
+    }
+    var copyBtn = mk('Copy', function () {
+      copyText(text()).then(function (ok) {
+        copyBtn.textContent = ok ? 'Copied!' : 'Copy failed - select text';
+        setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1500);
+      });
+    });
+    mk('Download', function () {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text()], { type: 'text/plain' }));
+      a.download = 'eaglercraft-log.txt'; document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    });
+    var errBtn = mk('Errors only: off', function () { errOnly = !errOnly; errBtn.textContent = 'Errors only: ' + (errOnly ? 'on' : 'off'); render(); pre.scrollTop = pre.scrollHeight; });
+    mk('Jump to end', function () { pre.scrollTop = pre.scrollHeight; });
+    mk('Close', function () { toggle(false); });
+    bar.appendChild(status);
+    panel.appendChild(bar); panel.appendChild(pre);
+    function toggle(v) {
+      open = typeof v === 'boolean' ? v : !open;
+      panel.style.display = open ? 'flex' : 'none';
+      if (timer) { clearInterval(timer); timer = null; }
+      if (open) {
+        try { if (document.pointerLockElement) document.exitPointerLock(); } catch (e) {}
+        render(); pre.scrollTop = pre.scrollHeight; timer = setInterval(render, 700);
+      }
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    ['mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown'].forEach(function (t) {
+      panel.addEventListener(t, function (e) { e.stopPropagation(); });
+    });
+    document.body.appendChild(btn); document.body.appendChild(panel);
+    window.__eaglerLogConsole = { toggle: toggle };
+  }
+  if (document.body) init(); else document.addEventListener('DOMContentLoaded', init, { once: true });
+})();
+</script>
 </body>
 </html>
