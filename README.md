@@ -2,8 +2,8 @@
 experimental version of eaglercraft 26.2 that aims to make the game run much much faster.
 WARNING is HEAVILY WIP
 is in ALPHA STAGES
-do not expect this project to be done soon
-has lots of debug options so you can fix it if its not working for you
+do not expect this project to be done soon.
+ Has lots of debug options so you can fix it if its not working for you
 
 logs-
 
